@@ -1,0 +1,37 @@
+version: '2'
+
+services:
+
+  server:
+    build:
+      context: ./services/server
+      dockerfile: Dockerfile
+    ports:
+      - 5011:5000
+    env_file:
+      - ./services/.env
+    volumes:
+      - ./services/server/manage.py:/usr/src/app/project/manage.py
+    depends_on:
+      - postgres
+
+  postgres:
+    build:
+      context: ./services/db
+      dockerfile: Dockerfile
+    expose:
+      - 5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - ./db/data:/var/lib/postgresql/data
+
+  client:
+    build:
+      context: ./services/client
+      dockerfile: Dockerfile
+    ports:
+      - 8090:8080
+    depends_on:
+      - server
