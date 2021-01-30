@@ -1,19 +1,22 @@
-FROM node:13.7.0-alpine
-
-RUN npm install -g http-server
+FROM node:14.5-alpine
 
 WORKDIR /app
 
-COPY package*.json ./
+RUN apk update && \
+    yarn global add @vue/cli
 
-RUN npm install
+# COPY package.json ./
 
-# RUN npm update vue-template-compiler
+RUN yarn install
 
 COPY . .
 
-RUN ROOT_API=http://localhost:5011 npm run build
+# Production
+# RUN npm install -g http-server
+# RUN ROOT_API=http://localhost:5011 npm run build
+# CMD [ "http-server", "dist" ]
 
-EXPOSE 8080
-
-CMD [ "http-server", "dist" ]
+# Development 
+# CMD [ "npm", "run", "dev"]
+# serve打てない時はvue-cli入っているかpackage.json要確認
+CMD ["yarn", "serve"]

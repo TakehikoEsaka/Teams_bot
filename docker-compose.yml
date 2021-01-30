@@ -1,7 +1,6 @@
 version: '2'
 
 services:
-
   server:
     build:
       context: ./services/server
@@ -10,8 +9,8 @@ services:
       - 5011:5000
     env_file:
       - ./services/.env
-    volumes:
-      - ./services/server/manage.py:/usr/src/app/project/manage.py
+    # volumes:
+    #   - ./services/server/manage.py:/usr/src/app/project/manage.py
     depends_on:
       - postgres
 
@@ -33,5 +32,8 @@ services:
       dockerfile: Dockerfile
     ports:
       - 8090:8080
+    volumes:
+      - ./services/client/:/app/
     depends_on:
       - server
+    command: /bin/sh -c "while :; do sleep 10; done"
