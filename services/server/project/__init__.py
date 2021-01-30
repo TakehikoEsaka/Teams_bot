@@ -19,6 +19,12 @@ def create_app(script_info=None):
     # enable CORS
     CORS(app)
 
+    # explicitly load .flaskenv (gnicornでproductionする時にも.flaskenv読みたい時は以下のように明示的に読む)
+    # import os
+    # from dotenv import load_dotenv
+    # basedir = os.path.abspath(os.path.dirname('__file__'))
+    # load_dotenv(os.path.join(basedir, '.flaskenv'))
+
     # set config
     app_settings = os.getenv('APP_SETTINGS')
     app.config.from_object(app_settings)

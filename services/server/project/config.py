@@ -1,5 +1,4 @@
 import os
-
 POSTGRES_USER = os.environ.get('POSTGRES_USER')
 POSTGRES_PASSWORD = os.environ.get('POSTGRES_PASSWORD')
 # database名をurlにつけて操作するdatabaseを切り替える事が出来る．
