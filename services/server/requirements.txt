@@ -10,4 +10,4 @@ flask_apscheduler
 selenium
 numpy
 pandas
-python-dotenv #.flaskenvを読み込む用
+python-dotenv==0.15.0 #.flaskenvを読み込む用

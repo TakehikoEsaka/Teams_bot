@@ -10,7 +10,7 @@ services:
     env_file:
       - ./services/.env
     volumes:
-      - ./services/server/project/:/usr/src/app/project/
+      - ./services/server/project:/usr/src/app/project/
     depends_on:
       - postgres
 
@@ -23,8 +23,8 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-    volumes:
-      - ./db/data:/var/lib/postgresql/data
+    # volumes:
+    #   - ./db/data:/var/lib/postgresql/data
 
   client:
     build:
