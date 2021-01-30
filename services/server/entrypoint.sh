@@ -14,4 +14,4 @@ flask db migrate
 flask db upgrade
 echo "migration end"
 
-gunicorn -b 0.0.0.0:5000 manage:app
+gunicorn -b 0.0.0.0:5000 manage:app --reload --log-level debug

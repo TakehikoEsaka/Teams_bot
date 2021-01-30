@@ -7,6 +7,7 @@ from selenium.webdriver import DesiredCapabilities
 import numpy as np
 import pandas as pd
 import chromedriver_binary
+import os
 
 options = webdriver.ChromeOptions() 
 options.add_argument('--headless')
@@ -22,9 +23,9 @@ options.add_argument("--no-sandbox")  # userをrootとして起動する時に�
 # chrome_driver_binary = "/usr/local/bin/chromedriver" 
 driver = webdriver.Chrome(options=options) 
 
-def decide_whom(count):
+def get_status():
     try:
-        url = os.getenv(WHITE_BOARD_URL)
+        url = os.getenv('WHITE_BOARD_URL')
         driver.get(url)
         
         # 明示的待機処理
@@ -54,13 +55,15 @@ def decide_whom(count):
     finally:
         driver.quit()
         print("browser閉じる")
+    return status
 
-    print("status", status)
+def decide_whom(count):
+    status = get_status()
     df = pd.concat([pd.Series(count), pd.Series(status)], axis = 1)
     df.columns = ["count", "status"]
     df = df.sort_values('count')
     for index, row in df.iterrows():
         if row["status"] == True:
-            print("今日の担当{}さん".format(index))
             break
+    # kari
     return index
