@@ -9,8 +9,8 @@ services:
       - 5011:5000
     env_file:
       - ./services/.env
-    # volumes:
-    #   - ./services/server/manage.py:/usr/src/app/project/manage.py
+    volumes:
+      - ./services/server/project/:/usr/src/app/project/
     depends_on:
       - postgres
 

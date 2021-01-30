@@ -5,14 +5,14 @@
         <h1>スケジュールを入力</h1>
         <hr><br><br>
         <alert :message=message v-if="showMessage"></alert>
-        <button type="button" class="btn btn-success btn-sm" v-b-modal.book-modal>Add Book</button>
+        <button type="button" class="btn btn-success btn-sm" v-b-modal.book-modal>Add</button>
         <br><br>
         <table class="table table-hover">
           <thead>
             <tr>
-              <th scope="col">Title</th>
-              <th scope="col">Author</th>
-              <th scope="col">Read?</th>
+              <th scope="col">開始日時</th>
+              <th scope="col">Cron</th>
+              <th scope="col">終了日時</th>
               <th></th>
             </tr>
           </thead>
@@ -46,36 +46,30 @@
     </div>
     <b-modal ref="addBookModal"
              id="book-modal"
-             title="Add a new book"
+             title="スケジューラー追加"
              hide-footer>
       <b-form @submit="onSubmit" @reset="onReset" class="w-100">
-      <b-form-group id="form-title-group"
-                    label="Title:"
+      <b-form-group id="form-startdate-group"
+                    label="開始日時:"
                     label-for="form-title-input">
           <b-form-input id="form-title-input"
                         type="text"
-                        v-model="addBookForm.title"
+                        v-model="addSchedule.startdate"
                         required
                         placeholder="Enter title">
           </b-form-input>
         </b-form-group>
         <b-form-group id="form-author-group"
-                      label="Author:"
+                      label="Cron:"
                       label-for="form-author-input">
             <b-form-input id="form-author-input"
                           type="text"
-                          v-model="addBookForm.author"
+                          v-model="addSchedule.cron"
                           required
-                          placeholder="Enter author">
+                          placeholder="1時間ごとの場合 1:00:00">
             </b-form-input>
           </b-form-group>
-        <b-form-group id="form-read-group">
-          <b-form-checkbox-group v-model="addBookForm.read" id="form-checks">
-            <b-form-checkbox value="true">Read?</b-form-checkbox>
-          </b-form-checkbox-group>
-        </b-form-group>
-        <b-button type="submit" variant="primary">Submit</b-button>
-        <b-button type="reset" variant="danger">Reset</b-button>
+        <b-button type="submit" variant="primary">確定</b-button>
       </b-form>
     </b-modal>
     <b-modal ref="editBookModal"
@@ -122,7 +116,7 @@ export default {
   data() {
     return {
       books: [],
-      addBookForm: {
+      addSchedule: {
         title: '',
         author: '',
         read: [],
@@ -143,6 +137,7 @@ export default {
   },
   methods: {
     getBooks() {
+      // # TODO ここをflaskとつなぎ込む
       const path = `${this.ROOT_API}/books`;
       axios.get(path)
         .then((res) => {
@@ -196,9 +191,8 @@ export default {
         });
     },
     initForm() {
-      this.addBookForm.title = '';
-      this.addBookForm.author = '';
-      this.addBookForm.read = [];
+      this.addSchedule.startdate = '';
+      this.addSchedule.cron = '';
       this.editForm.id = '';
       this.editForm.title = '';
       this.editForm.author = '';
@@ -208,10 +202,10 @@ export default {
       evt.preventDefault();
       this.$refs.addBookModal.hide();
       let read = false;
-      if (this.addBookForm.read[0]) read = true;
+      if (this.addSchedule.read[0]) read = true;
       const payload = {
-        title: this.addBookForm.title,
-        author: this.addBookForm.author,
+        title: this.addSchedule.title,
+        author: this.addSchedule.author,
         read, // property shorthand
       };
       this.addBook(payload);
