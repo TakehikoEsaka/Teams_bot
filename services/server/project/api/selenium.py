@@ -67,4 +67,5 @@ def decide_whom(count):
             break
     index = "Esaka"
     # kari
+    index = "Esaka"
     return index
