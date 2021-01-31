@@ -1,13 +1,14 @@
 import os
-from flask import Blueprint, jsonify, request
+from flask import Flask, Blueprint, jsonify, request
 from project.api.models import Info
-from project import db
+from project import create_app, db
 from project.api import selenium
 
 # ?? Blueprintとは何か？databaseの情報をflaskに教えてあげる必要があるのか．
-info_blueprint = Blueprint('info', __name__)
+# info_blueprint = Blueprint('info', __name__)
+app = create_app()
 
-@info_blueprint.route('/confirm_status', methods=['GET'])
+# @info_blueprint.route('/confirm_status', methods=['GET'])
 def confirm_status():
     status = selenium.get_status()
     return jsonify({
@@ -16,7 +17,7 @@ def confirm_status():
         'container_id': os.uname()[1]
     })
 
-@info_blueprint.route('/ask_shoudoku', methods=['GET'])
+# @info_blueprint.route('/ask_shoudoku', methods=['GET'])
 def write_db():
     # DBのget（SQLのselect）は以下のようにする．
     data = db.session.query(Info.name, Info.count).all()
@@ -36,7 +37,7 @@ def write_db():
 
     return message
 
-@info_blueprint.route('/info', methods=['GET'])
+# @info_blueprint.route('/info', methods=['GET'])
 def all_info():
     response_object = {
         'status': 'success',
@@ -45,13 +46,12 @@ def all_info():
     response_object['info'] = [info.to_json() for info in Info.query.all()]
     return jsonify(response_object)
 
-@info_blueprint.route('/info/ping', methods=['GET'])
-def ping():
-    return jsonify({
-        'status': 'success',
-        'message': 'pong!',
-        'container_id': os.uname()[1]
-    })
+# @info_blueprint.route('/info/ping', methods=['GET'])
+
+ 
+@app.route('/hello')
+def hello_world():
+    return jsonify({'message': 'Hello, world'})
 
 if __name__ == '__main__':
     app.run()

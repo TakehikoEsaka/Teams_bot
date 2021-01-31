@@ -2,110 +2,14 @@
   <div class="container">
     <div class="row">
       <div class="col-sm-10">
-        <h1>スケジュールを入力</h1>
+        <h1>Let's Defeat Covid-19 !!</h1>
         <hr><br><br>
         <alert :message=message v-if="showMessage"></alert>
-        <button type="button" class="btn btn-success btn-sm" v-b-modal.book-modal>Add</button>
+        <button type="button" class="btn btn-success btn-sm" v-on:click="ask_shoudoku">消毒をお願いする</button>
+        <h1>{{this.message}}</h1>
         <br><br>
-        <table class="table table-hover">
-          <thead>
-            <tr>
-              <th scope="col">開始日時</th>
-              <th scope="col">Cron</th>
-              <th scope="col">終了日時</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(book, index) in books" :key="index">
-              <td>{{ book.title }}</td>
-              <td>{{ book.author }}</td>
-              <td>
-                <span v-if="book.read">Yes</span>
-                <span v-else>No</span>
-              </td>
-              <td>
-                <button
-                        type="button"
-                        class="btn btn-warning btn-sm"
-                        v-b-modal.book-update-modal
-                        @click="editBook(book)">
-                    Update
-                </button>
-                <button
-                        type="button"
-                        class="btn btn-danger btn-sm"
-                        @click="onDeleteBook(book)">
-                    Delete
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
       </div>
     </div>
-    <b-modal ref="addBookModal"
-             id="book-modal"
-             title="スケジューラー追加"
-             hide-footer>
-      <b-form @submit="onSubmit" @reset="onReset" class="w-100">
-      <b-form-group id="form-startdate-group"
-                    label="開始日時:"
-                    label-for="form-title-input">
-          <b-form-input id="form-title-input"
-                        type="text"
-                        v-model="addSchedule.startdate"
-                        required
-                        placeholder="Enter title">
-          </b-form-input>
-        </b-form-group>
-        <b-form-group id="form-author-group"
-                      label="Cron:"
-                      label-for="form-author-input">
-            <b-form-input id="form-author-input"
-                          type="text"
-                          v-model="addSchedule.cron"
-                          required
-                          placeholder="1時間ごとの場合 1:00:00">
-            </b-form-input>
-          </b-form-group>
-        <b-button type="submit" variant="primary">確定</b-button>
-      </b-form>
-    </b-modal>
-    <b-modal ref="editBookModal"
-             id="book-update-modal"
-             title="Update"
-             hide-footer>
-      <b-form @submit="onSubmitUpdate" @reset="onResetUpdate" class="w-100">
-      <b-form-group id="form-title-edit-group"
-                    label="Title:"
-                    label-for="form-title-edit-input">
-          <b-form-input id="form-title-edit-input"
-                        type="text"
-                        v-model="editForm.title"
-                        required
-                        placeholder="Enter title">
-          </b-form-input>
-        </b-form-group>
-        <b-form-group id="form-author-edit-group"
-                      label="Author:"
-                      label-for="form-author-edit-input">
-            <b-form-input id="form-author-edit-input"
-                          type="text"
-                          v-model="editForm.author"
-                          required
-                          placeholder="Enter author">
-            </b-form-input>
-          </b-form-group>
-        <b-form-group id="form-read-edit-group">
-          <b-form-checkbox-group v-model="editForm.read" id="form-checks">
-            <b-form-checkbox value="true">Read?</b-form-checkbox>
-          </b-form-checkbox-group>
-        </b-form-group>
-        <b-button type="submit" variant="primary">Update</b-button>
-        <b-button type="reset" variant="danger">Cancel</b-button>
-      </b-form>
-    </b-modal>
   </div>
 </template>
 
@@ -129,19 +33,19 @@ export default {
       },
       message: '',
       showMessage: false,
-      ROOT_API: process.env.ROOT_API,
+      ROOT_API: "http://server:5000",
     };
   },
   components: {
     alert: Alert,
   },
   methods: {
-    getBooks() {
+    ask_shoudoku() {
       // # TODO ここをflaskとつなぎ込む
-      const path = `${this.ROOT_API}/books`;
-      axios.get(path)
+      // const path = `${this.ROOT_API}/info/ping`;
+      axios.get(`http://server:5000/info/ping`)
         .then((res) => {
-          this.books = res.data.books;
+          this.message = res.data.message;
         })
         .catch((error) => {
           // eslint-disable-next-line
@@ -189,56 +93,6 @@ export default {
           console.error(error);
           this.getBooks();
         });
-    },
-    initForm() {
-      this.addSchedule.startdate = '';
-      this.addSchedule.cron = '';
-      this.editForm.id = '';
-      this.editForm.title = '';
-      this.editForm.author = '';
-      this.editForm.read = [];
-    },
-    onSubmit(evt) {
-      evt.preventDefault();
-      this.$refs.addBookModal.hide();
-      let read = false;
-      if (this.addSchedule.read[0]) read = true;
-      const payload = {
-        title: this.addSchedule.title,
-        author: this.addSchedule.author,
-        read, // property shorthand
-      };
-      this.addBook(payload);
-      this.initForm();
-    },
-    onSubmitUpdate(evt) {
-      evt.preventDefault();
-      this.$refs.editBookModal.hide();
-      let read = false;
-      if (this.editForm.read[0]) read = true;
-      const payload = {
-        title: this.editForm.title,
-        author: this.editForm.author,
-        read,
-      };
-      this.updateBook(payload, this.editForm.id);
-    },
-    onReset(evt) {
-      evt.preventDefault();
-      this.$refs.addBookModal.hide();
-      this.initForm();
-    },
-    onResetUpdate(evt) {
-      evt.preventDefault();
-      this.$refs.editBookModal.hide();
-      this.initForm();
-      this.getBooks(); // why?
-    },
-    onDeleteBook(book) {
-      this.removeBook(book.id);
-    },
-    editBook(book) {
-      this.editForm = book;
     },
   },
   created() {

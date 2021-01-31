@@ -3,11 +3,12 @@ from project import create_app, db
 from project.api.models import Info
 from project.api import info
 from flask_apscheduler import APScheduler
+from flask import jsonify
 import json
 import os
 
 app = create_app()
-cli = FlaskGroup(create_app=create_app)
+# cli = FlaskGroup(create_app=create_app)
 
 def before():
     print("おはようございます．今日の勤怠状況をwhite-boardの記入をお願いします")
@@ -24,19 +25,31 @@ def now(name, count):
     # curl -H 'Content-Type: application/json' -d '{"text": "Hello World"}' <YOUR WEBHOOK URL>
 
 # python manage.pyの引数をここで定義
-@cli.command('recreate_db')
+# @cli.command('recreate_db')
 def recreate_db():
     # データベースを操るcursorはflaskインスタンスから，db = SQLAlchemy(app)と生成する事が一般的
     db.drop_all() # 既存のdatabase削除
     db.create_all() # 作成したクラス(テーブル)を実際にSQLite上に作成
     db.session.commit()
 
-@cli.command('seed_db')
+# @cli.command('seed_db')
 def seed_db():
     names = os.getenv("PEOPLE_NAME").split(",")
     for n in names:
         db.session.add(Info(name=n, count=0, status=False)) # dbにエントリをaddする
     db.session.commit()
+
+@app.route('/info/ping')
+def ping():
+    return jsonify({
+        'status': 'success',
+        'message': 'pong!',
+        'container_id': os.uname()[1]
+    })
+
+@app.route('/hello')
+def hello_world():
+    return jsonify({'message': 'Hello, world'})
 
 if __name__ == '__main__':
     scheduler = APScheduler()
@@ -45,4 +58,4 @@ if __name__ == '__main__':
     # scheduler.add_job(func=now, args=["榎阪", 200], trigger='interval', id='now', seconds=60)
     scheduler.add_job(func=after, args=[], trigger='interval', id='after', seconds=60)
     scheduler.start()
-    cli()
+    app.run(debug=True)

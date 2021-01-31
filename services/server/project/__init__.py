@@ -35,8 +35,8 @@ def create_app(script_info=None):
 
     # register blueprints
     # ？？flaskにdatabaseを覚えさせておく必要があるのか？？
-    from project.api.info import info_blueprint
-    app.register_blueprint(info_blueprint)
+    # from project.api.info import info_blueprint
+    # app.register_blueprint(info_blueprint)
 
     # shell context for flask cli
     @app.shell_context_processor
