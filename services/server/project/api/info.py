@@ -3,6 +3,7 @@ from flask import Blueprint, jsonify, request
 from project.api.models import Info
 from project import db
 from project.api import selenium
+from project.api import send_to_line
 
 # ?? Blueprintとは何か？databaseの情報をflaskに教えてあげる必要があるのか．
 info_blueprint = Blueprint('info', __name__)
@@ -10,6 +11,9 @@ info_blueprint = Blueprint('info', __name__)
 @info_blueprint.route('/confirm_status', methods=['GET'])
 def confirm_status():
     status = selenium.get_status()
+    message = "{}".format(status)
+    send_to_line.send_message(message)
+
     return jsonify({
         'status': 'success',
         'message': status,
@@ -26,14 +30,20 @@ def write_db():
     
     print("Kye", counts.keys())
     name = selenium.decide_whom(counts)
-    count = counts[name] + 1
+    
+    # TODO 仮
+    # count = counts[name] + 1
+    count = 10
+    
     message = "{}さん本日の消毒と安全点検をお願いします".format(name)
     print(message)
 
     # DBへの書込み
-    db.session.query(Info).filter(Info.name == name).first().count = count
-    db.session.commit()
+    # TODO
+    # db.session.query(Info).filter(Info.name == name).first().count = count
+    # db.session.commit()
 
+    send_to_line.send_message(message)
     return message
 
 @info_blueprint.route('/info', methods=['GET'])

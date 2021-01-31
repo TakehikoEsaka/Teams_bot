@@ -66,4 +66,5 @@ def decide_whom(count):
         if row["status"] == True:
             break
     # kari
+    index = "Esaka"
     return index
