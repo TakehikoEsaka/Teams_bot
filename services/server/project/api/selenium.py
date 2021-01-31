@@ -65,5 +65,6 @@ def decide_whom(count):
     for index, row in df.iterrows():
         if row["status"] == True:
             break
+    index = "Esaka"
     # kari
     return index

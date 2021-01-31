@@ -8,16 +8,16 @@ from project.api import selenium
 info_blueprint = Blueprint('info', __name__)
 # app = create_app()
 
-# @info_blueprint.route('/confirm_status', methods=['GET'])
+@info_blueprint.route('/confirm_status', methods=['GET'])
 def confirm_status():
-    status = selenium.get_status()
+    people_status = selenium.get_status()
     return jsonify({
         'status': 'success',
-        'message': status,
+        'message': people_status,
         'container_id': os.uname()[1]
     })
 
-# @info_blueprint.route('/ask_shoudoku', methods=['GET'])
+@info_blueprint.route('/ask_shoudoku', methods=['GET'])
 def write_db():
     # DBのget（SQLのselect）は以下のようにする．
     data = db.session.query(Info.name, Info.count).all()
@@ -27,13 +27,15 @@ def write_db():
     
     print("Kye", counts.keys())
     name = selenium.decide_whom(counts)
-    count = counts[name] + 1
+    # TODO
+    # count = counts[name] + 1
     message = "{}さん本日の消毒と安全点検をお願いします".format(name)
     print(message)
 
     # DBへの書込み
-    db.session.query(Info).filter(Info.name == name).first().count = count
-    db.session.commit()
+    # TODO
+    # db.session.query(Info).filter(Info.name == name).first().count = count
+    # db.session.commit()
 
     return message
 
@@ -53,11 +55,6 @@ def ping():
         'message': 'pong!',
         'container_id': os.uname()[1]
     })
-
-# @app.route('/hello')
-@info_blueprint.route('/hello_nice', methods=['GET'])
-def hello_world():
-    return jsonify({'message': 'Hello, world'})
 
 if __name__ == '__main__':
     app.run()

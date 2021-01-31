@@ -5,8 +5,12 @@
         <h1>Let's Defeat Covid-19 !!</h1>
         <hr><br><br>
         <alert :message=message v-if="showMessage"></alert>
+        
+        <button type="button" class="btn btn-success btn-sm" v-on:click="confirm_status">今日のステータスを確認する</button>
+        <h1>{{this.message_confirm_status}}</h1>
+        
         <button type="button" class="btn btn-success btn-sm" v-on:click="ask_shoudoku">消毒をお願いする</button>
-        <h1>{{this.message}}</h1>
+        <h1>{{this.message_ask_shoudoku}}</h1>
         <br><br>
       </div>
     </div>
@@ -31,7 +35,8 @@ export default {
         author: '',
         read: [],
       },
-      message: '',
+      message_ask_shoudoku: '',
+      message_confirm_status: '',
       showMessage: false,
       ROOT_API: "http://server:5000",
     };
@@ -40,63 +45,34 @@ export default {
     alert: Alert,
   },
   methods: {
+    set_value() {
+      this.message_ask_shoudoku = ""
+      this.message_confirm_status = ""
+    },
     ask_shoudoku() {
-      // # TODO ここをflaskとつなぎ込む
       // const path = `${this.ROOT_API}/info/ping`;
-      axios.get(`http://server:5000/info/ping`)
+      axios.get(`http://localhost:5011/ask_shoudoku`)
         .then((res) => {
-          this.message = res.data.message;
+          this.message_ask_shoudoku = res.data.message;
         })
         .catch((error) => {
           // eslint-disable-next-line
           console.error(error);
         });
     },
-    addBook(payload) {
-      const path = `${this.ROOT_API}/books`;
-      axios.post(path, payload)
-        .then(() => {
-          this.getBooks();
-          this.message = 'Book added!';
-          this.showMessage = true;
+    confirm_status() {
+      axios.get(`http://localhost:5011/confirm_status`)
+        .then((res) => {
+          this.message_confirm_status = res.data.message;
         })
         .catch((error) => {
           // eslint-disable-next-line
           console.error(error);
-          this.getBooks();
         });
     },
-    updateBook(payload, bookID) {
-      const path = `${this.ROOT_API}/books/${bookID}`;
-      axios.put(path, payload)
-        .then(() => {
-          this.getBooks();
-          this.message = 'Book updated!';
-          this.showMessage = true;
-        })
-        .catch((error) => {
-          // eslint-disable-next-line
-          console.error(error);
-          this.getBooks();
-        });
-    },
-    removeBook(bookID) {
-      const path = `${this.ROOT_API}/books/${bookID}`;
-      axios.delete(path)
-        .then(() => {
-          this.getBooks();
-          this.message = 'Book removed!';
-          this.showMessage = true;
-        })
-        .catch((error) => {
-          // eslint-disable-next-line
-          console.error(error);
-          this.getBooks();
-        });
-    },
-  },
   created() {
-    this.getBooks();
+    this.set_value();
   },
-};
+  }
+}
 </script>
