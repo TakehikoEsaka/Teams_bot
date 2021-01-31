@@ -41,7 +41,7 @@ services:
       - ./services/client/:/app/
     depends_on:
       - server
-    command: /bin/sh -c "while :; do sleep 10; done"
+    # command: /bin/sh -c "while :; do sleep 10; done"
     networks:
       - app-net
 

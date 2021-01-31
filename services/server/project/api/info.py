@@ -14,7 +14,6 @@ def confirm_status():
     people_status = selenium.get_status()
     message = "{}".format(status)
     send_to_line.send_message(message)
-
     return jsonify({
         'status': 'success',
         'message': people_status,
@@ -45,7 +44,11 @@ def write_db():
     # db.session.commit()
 
     send_to_line.send_message(message)
-    return message
+    return jsonify({
+        'status': 'success',
+        'message': message,
+        'container_id': os.uname()[1]
+    })
 
 @info_blueprint.route('/info', methods=['GET'])
 def all_info():
