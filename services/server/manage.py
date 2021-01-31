@@ -20,7 +20,6 @@ def now(name, count):
     # app_contextのwithステートメントの中で記述が必要
     with app.app_context():
         info.write_db()
-
     # 投稿
     # curl -H 'Content-Type: application/json' -d '{"text": "Hello World"}' <YOUR WEBHOOK URL>
 
@@ -38,18 +37,6 @@ def seed_db():
     for n in names:
         db.session.add(Info(name=n, count=0, status=False)) # dbにエントリをaddする
     db.session.commit()
-
-@app.route('/info/ping')
-def ping():
-    return jsonify({
-        'status': 'success',
-        'message': 'pong!',
-        'container_id': os.uname()[1]
-    })
-
-@app.route('/hello')
-def hello_world():
-    return jsonify({'message': 'Hello, world'})
 
 if __name__ == '__main__':
     scheduler = APScheduler()

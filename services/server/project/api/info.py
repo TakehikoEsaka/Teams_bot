@@ -5,8 +5,8 @@ from project import create_app, db
 from project.api import selenium
 
 # ?? Blueprintとは何か？databaseの情報をflaskに教えてあげる必要があるのか．
-# info_blueprint = Blueprint('info', __name__)
-app = create_app()
+info_blueprint = Blueprint('info', __name__)
+# app = create_app()
 
 # @info_blueprint.route('/confirm_status', methods=['GET'])
 def confirm_status():
@@ -37,7 +37,7 @@ def write_db():
 
     return message
 
-# @info_blueprint.route('/info', methods=['GET'])
+@info_blueprint.route('/info', methods=['GET'])
 def all_info():
     response_object = {
         'status': 'success',
@@ -46,10 +46,16 @@ def all_info():
     response_object['info'] = [info.to_json() for info in Info.query.all()]
     return jsonify(response_object)
 
-# @info_blueprint.route('/info/ping', methods=['GET'])
+@info_blueprint.route('/info/ping', methods=['GET'])
+def ping():
+    return jsonify({
+        'status': 'success',
+        'message': 'pong!',
+        'container_id': os.uname()[1]
+    })
 
- 
-@app.route('/hello')
+# @app.route('/hello')
+@info_blueprint.route('/hello_nice', methods=['GET'])
 def hello_world():
     return jsonify({'message': 'Hello, world'})
 
